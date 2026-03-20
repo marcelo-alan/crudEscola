@@ -1,5 +1,4 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Windows.Forms;
 
 namespace CrudEscola
@@ -11,73 +10,71 @@ namespace CrudEscola
             InitializeComponent();
         }
 
-        public void AtualizarDashboard()
+        // Método mestre para trocar as telas no painel
+        private void AbrirFormNoPainel(Form formFilho)
         {
-            Conexao con = new Conexao();
-            try
-            {
-                MySqlConnection conexaoAberta = con.AbrirConexao();
-                if (conexaoAberta != null)
-                {
-                    // Contadores (Mantendo os nomes dos seus labels)
-                    lblTotalAlunos.Text = new MySqlCommand("SELECT COUNT(*) FROM aluno", conexaoAberta).ExecuteScalar().ToString();
-                    lblTotalProfessores.Text = new MySqlCommand("SELECT COUNT(*) FROM professor", conexaoAberta).ExecuteScalar().ToString();
-                    lblTotalTurmas.Text = new MySqlCommand("SELECT COUNT(*) FROM turma", conexaoAberta).ExecuteScalar().ToString();
-                }
-            }
-            catch (Exception ex) { MessageBox.Show("Erro Dashboard: " + ex.Message); }
-            finally { con.FecharConexao(); }
+            if (this.pnlPrincipal.Controls.Count > 0)
+                this.pnlPrincipal.Controls.Clear();
+
+            formFilho.TopLevel = false;
+            formFilho.FormBorderStyle = FormBorderStyle.None;
+            formFilho.Dock = DockStyle.Fill;
+
+            this.pnlPrincipal.Controls.Add(formFilho);
+            formFilho.Show();
         }
 
         private void frmPrincipal_Load(object sender, EventArgs e)
         {
             lblUsuario.Text = "Bem-vindo, " + sessaoSistema.nomeUsuario;
             lblData.Text = DateTime.Now.ToString("dd/MM/yyyy");
-            AtualizarDashboard();
+
+            // Inicia mostrando o Dashboard
+            AbrirFormNoPainel(new frmDashboard());
         }
 
-        // --- NAVEGAÇÃO SEGURA (ESCONDE/MOSTRA) ---
+        // --- VINCULE ESTES NOMES NO ÍCONE DO RAIO (EVENTOS) NO DESIGN ---
 
         private void lblAlunos_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            cadastroAluno tela = new cadastroAluno();
-            this.Hide();           // Esconde a principal
-            tela.ShowDialog();     // Abre a nova
-            this.Show();           // Volta ao fechar a nova
-            AtualizarDashboard();  // Atualiza números
+            // Abre o formulário de cadastro de alunos
+            AbrirFormNoPainel(new cadastroAluno());
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void lblprofessor_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            buscar tela = new buscar();
-            this.Hide();
-            tela.ShowDialog();
-            this.Show();
-            AtualizarDashboard();
-        }
-
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            frmCadastro tela = new frmCadastro();
-            this.Hide();
-            tela.ShowDialog();
-            this.Show();
-            AtualizarDashboard();
+            // Abre o formulário de cadastro (Professor)
+            AbrirFormNoPainel(new frmCadastro());
         }
 
         private void lblTurma_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            frmTurma tela = new frmTurma();
-            this.Hide();
-            tela.ShowDialog();
-            this.Show();
-            AtualizarDashboard();
+            // Abre o formulário de cadastro de turmas
+            AbrirFormNoPainel(new frmTurma());
+        }
+
+        private void lblBuscar_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            // Abre o formulário de busca
+            AbrirFormNoPainel(new buscar());
+        }
+
+        private void lblInicio_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            // Abre o formulário de inico
+            AbrirFormNoPainel(new frmDashboard());
         }
 
         private void bntSair_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Deseja sair?", "Sair", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            // Exibe uma caixa de mensagem perguntando se deseja sair
+            DialogResult resultado = MessageBox.Show("Deseja realmente sair do sistema?", "Confirmação", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (resultado == DialogResult.Yes)
+            {
+                // Fecha toda a aplicação
                 Application.Exit();
+            }
         }
     }
 }

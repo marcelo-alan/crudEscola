@@ -88,6 +88,7 @@
             this.textSenha.Name = "textSenha";
             this.textSenha.Size = new System.Drawing.Size(174, 20);
             this.textSenha.TabIndex = 4;
+            this.textSenha.UseSystemPasswordChar = true;
             // 
             // textUsuario
             // 

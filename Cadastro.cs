@@ -6,7 +6,7 @@ namespace CrudEscola
 {
     public partial class frmCadastro : Form
     {
-        // Variáveis globais (Mantendo seus nomes)
+        // Variáveis globais
         public string nome;
         public string dataNascimento;
         public string telefone;
@@ -21,7 +21,6 @@ namespace CrudEscola
             InitializeComponent();
         }
 
-        // Botão Cadastrar (button1)
         private void button1_Click(object sender, EventArgs e)
         {
             // 1. Validação simples de campos obrigatórios
@@ -43,7 +42,7 @@ namespace CrudEscola
                 return;
             }
 
-            // 2. Atribuição dos valores dos campos às variáveis
+            // 2. Atribuição dos valores
             nome = textNome.Text;
             dataNascimento = textData.Text;
             telefone = textTelefone.Text;
@@ -54,19 +53,26 @@ namespace CrudEscola
             senha = textSenha.Text;
 
             // 3. Instancia a classe Professor e chama o método de cadastro
+            // Certifique-se que sua classe Professor tenha o construtor nessa ordem exata
             Professor professorObjeto = new Professor(nome, dataNascimento, estado, cidade, cpf, telefone, usuario, senha);
-            professorObjeto.CadastrarProfessor();
 
-            // 4. Atualiza o Dashboard da tela principal antes de fechar
-            if (this.MdiParent is frmPrincipal principal)
+            try
             {
-                principal.AtualizarDashboard();
-            }
+                professorObjeto.CadastrarProfessor();
+                MessageBox.Show("Professor cadastrado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            this.Close();
+                // 4. Fecha o formulário após salvar
+                // O Dashboard será atualizado automaticamente quando você clicar em "Início" 
+                // ou quando o formulário Principal for recarregado.
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao cadastrar no banco: " + ex.Message);
+            }
         }
 
-        // Eventos de clique vazios (mantidos para não dar erro no Designer)
+        // Eventos de clique vazios (Mantenha se eles estiverem vinculados no Designer)
         private void label5_Click(object sender, EventArgs e) { }
         private void label7_Click(object sender, EventArgs e) { }
         private void panel1_Paint(object sender, PaintEventArgs e) { }
